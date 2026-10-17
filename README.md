@@ -52,10 +52,12 @@ Double-cliquez sur: run.ps1
 ## 📋 Prérequis
 
 ### Windows
-- **Python 3.8+** : https://www.python.org
+- **Python 3.11 (recommandé)** : https://www.python.org
   - ✓ Cochez "Add Python to PATH" pendant l'installation
   - Vérifiez : Ouvrez PowerShell et tapez `python --version`
-  
+  - Les scripts utilisent automatiquement `py -3.11` s'il est disponible
+  - ⚠️ Python 3.12+ peut être incompatible avec les dépendances épinglées (pandas 2.1.4)
+
 - **Node.js 18+** : https://nodejs.org
   - Acceptez tous les paramètres par défaut
   - Vérifiez : Ouvrez PowerShell et tapez `node --version`
@@ -149,10 +151,19 @@ Application sur : `http://localhost:5173`
 3. Vérifiez : `node --version`
 
 ### ❌ "Erreur lors du calcul PDF/Excel"
+**Cause la plus fréquente** : le backend ne répond pas (venv cassé — par exemple si le Python utilisé pour le créer a été mis à jour ou supprimé). Le frontend affiche alors ce message générique.
+
 **Solution:**
-1. Exécutez: `INSTALL.ps1` (réinstallation propre)
-2. Attendez la fin complète
-3. Relancez: `run.ps1`
+1. Vérifiez le backend : ouvrez http://localhost:5000/api/health → doit afficher `{"status":"ok",...}`
+2. Relancez `run.ps1` : il détecte et répare automatiquement un venv invalide
+3. Si besoin, exécutez: `INSTALL.ps1` (réinstallation propre)
+4. En dernier recours, recréez le venv manuellement :
+```powershell
+cd backend
+Remove-Item -Path venv -Recurse -Force
+py -3.11 -m venv venv
+.\venv\Scripts\pip install -r requirements.txt
+```
 
 ### ❌ "Le port 5000 est déjà utilisé"
 **Solution:**
@@ -188,9 +199,9 @@ taskkill /IM node.exe /F
 ```powershell
 cd backend
 Remove-Item -Path venv -Recurse -Force
-python -m venv venv
-.\venv\Scripts\pip install --upgrade pip
-.\venv\Scripts\pip install -r requirements.txt
+py -3.11 -m venv venv
+.\venv\Scripts\python.exe -m pip install --upgrade pip
+.\venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
 ---
