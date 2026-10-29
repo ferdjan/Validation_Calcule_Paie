@@ -31,6 +31,17 @@ const formatPeriod = (period) => {
   return `${month}/${year}`
 }
 
+// Recalcule les OeuvresSociales des anciens imports (formule changée: 3% Brut - 1% R500)
+// Les entrées d'historique importées avant le changement gardent l'ancienne valeur figée.
+const RECALCULE_OS = (entry) => {
+  const r = entry.results
+  if (!r || typeof r.BRUT !== 'number' || typeof r.R500 !== 'number') return entry
+  return {
+    ...entry,
+    results: { ...r, OeuvresSociales: Math.round((r.BRUT * 0.03 - r.R500 * 0.01) * 100) / 100 }
+  }
+}
+
 const CalculatorContext = createContext()
 
 const API_URL = 'http://localhost:5000/api'
@@ -43,7 +54,7 @@ export function CalculatorProvider({ children }) {
   const [fileName, setFileName] = useState(null)
   const [history, setHistory] = useState(() => {
     const saved = localStorage.getItem('payroll_history')
-    return saved ? JSON.parse(saved) : []
+    return saved ? JSON.parse(saved).map(RECALCULE_OS) : []
   })
 
   useEffect(() => {

@@ -70,7 +70,7 @@ class PayrollCalculator:
         r642 = round(c2['net'] * 0.91, 2)
         r646 = round(r642 * 0.10, 2)
         r770 = round(r500 + c4['net'] + c5['net'], 2)
-        oeuvres_sociales = round(((r500 * 0.01) + (brut * 0.02)) * (2 / 3), 2)
+        oeuvres_sociales = round((brut * 0.03) - (r500 * 0.01), 2)
 
         return {
             'R500': r500, 

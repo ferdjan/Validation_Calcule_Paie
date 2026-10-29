@@ -22,6 +22,17 @@ if %backend_running% equ 0 (
     :: Tue les processus Python et Node.js proprement
     taskkill /F /IM python.exe /T 2>nul
     taskkill /F /IM node.exe /T 2>nul
+    
+    :: Attendre que les ports se libèrent
+    timeout /t 2 >nul
+    
+    :: Forcer la libération des ports (mode agressif)
+    for /f "tokens=5" %%a in ('netstat -ano ^| findstr :5000') do (
+        taskkill /PID %%a /F 2>nul
+    )
+    for /f "tokens=5" %%a in ('netstat -ano ^| findstr :5173') do (
+        taskkill /PID %%a /F 2>nul
+    )
 
     echo.
     echo ✅ APPLICATION FERMEE !
@@ -33,6 +44,9 @@ if %backend_running% equ 0 (
     echo.
     echo LANCEMENT EN COURS...
     echo.
+    
+    :: Attendre un peu que les ports soient libérés (TCP TIME_WAIT)
+    timeout /t 2 >nul
 
     :: Lance le script PowerShell en arrière-plan (ne pas attendre)
     start powershell -ExecutionPolicy Bypass -File "run.ps1"

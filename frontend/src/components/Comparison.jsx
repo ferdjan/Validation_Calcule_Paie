@@ -46,6 +46,7 @@ export default function Comparison() {
       R770: h.results.R770,
       CNAS_Total: h.results.CNAS.Total,
       Total_IRG: h.results.G50.Total_IRG,
+      OeuvresSociales: h.results.OeuvresSociales,
     }))
 
   const textColor = isDark ? '#94A3B8' : '#475569'
@@ -66,11 +67,21 @@ export default function Comparison() {
     return { value: diff, percent }
   }
 
+  const getVariationNested = (path) => {
+    if (!previous) return { value: 0, percent: 0 }
+    const keys = path.split('.')
+    const currentVal = keys.reduce((obj, k) => obj?.[k], current.results)
+    const prevVal = keys.reduce((obj, k) => obj?.[k], previous.results)
+    const diff = currentVal - prevVal
+    const percent = prevVal !== 0 ? ((diff / prevVal) * 100) : 0
+    return { value: diff, percent }
+  }
+
   const variations = [
     { label: 'Salaire de Poste', key: 'R500', ...getVariation('R500') },
     { label: 'Salaire Brut', key: 'BRUT', ...getVariation('BRUT') },
     { label: 'Net à Payer', key: 'R770', ...getVariation('R770') },
-    { label: 'Total CNAS', key: 'CNAS', ...getVariation('CNAS') },
+    { label: 'Total CNAS', key: 'CNAS', ...getVariationNested('CNAS.Total') },
   ]
 
   const currentLabel = current?.monthLabel || current?.month
@@ -152,10 +163,10 @@ export default function Comparison() {
           Évolution des salaires
         </h3>
         <ResponsiveContainer width="100%" height={350}>
-          <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <LineChart data={chartData} margin={{ top: 5, right: 30, left: 50, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
             <XAxis dataKey="month" stroke={textColor} />
-            <YAxis stroke={textColor} />
+            <YAxis stroke={textColor} width={45} tick={{ fontSize: 11 }} />
             <Tooltip 
               contentStyle={{ 
                 backgroundColor: isDark ? '#1E293B' : '#FFFFFF',
@@ -186,10 +197,10 @@ export default function Comparison() {
           Évolution des charges
         </h3>
         <ResponsiveContainer width="100%" height={350}>
-          <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <LineChart data={chartData} margin={{ top: 5, right: 30, left: 50, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
             <XAxis dataKey="month" stroke={textColor} />
-            <YAxis stroke={textColor} />
+            <YAxis stroke={textColor} width={45} tick={{ fontSize: 11 }} />
             <Tooltip 
               contentStyle={{ 
                 backgroundColor: isDark ? '#1E293B' : '#FFFFFF',
@@ -201,6 +212,7 @@ export default function Comparison() {
             <Legend />
             <Line type="monotone" dataKey="CNAS_Total" name="Total CNAS" stroke="#F59E0B" strokeWidth={2} />
             <Line type="monotone" dataKey="Total_IRG" name="Total IRG G50" stroke="#F43F5E" strokeWidth={2} />
+            <Line type="monotone" dataKey="OeuvresSociales" name="Œuvres Sociales" stroke="#06B6D4" strokeWidth={2} />
           </LineChart>
         </ResponsiveContainer>
       </motion.div>

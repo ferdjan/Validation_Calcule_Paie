@@ -276,7 +276,7 @@ def export_pdf():
         elements.append(Paragraph("<b>Montant des œuvres sociales</b>", styles['Heading2']))
         os_data = [
             ['Description', 'Montant (DA)'],
-            ['((1% R500 + 2% Brut) × 2/3)', f"{results.get('OeuvresSociales', 0):,.2f}"],
+            ['((3% Brut) − (1% R500))', f"{results.get('OeuvresSociales', 0):,.2f}"],
         ]
         os_table = Table(os_data, colWidths=[12*cm, 6*cm])
         os_table.setStyle(TableStyle([

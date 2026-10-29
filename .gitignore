@@ -1,36 +1,25 @@
+# Donnees de l'application (jamais versionnees)
+web_app.db
+web_app.db-*
+web_app-backup-*.db
+.session.key
+uploads/
+documents_pdf/
+
+# Paquets embarques pour l'installation hors-ligne (regeneres par pip download)
+wheels/
+
+# Installateurs hors-ligne (Node/Python, telechargeables sur les sites officiels)
+pour installation/
+
+# Node / Vite
+node_modules/
+frontend/dist/
+frontend/node_modules/.vite/
+.vite/
+
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
-.Python
+.venv/
 venv/
-env/
-*.egg-info/
-dist/
-build/
-
-# Node
-node_modules/
-dist/
-dist-ssr/
-*.local
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Uploads / donnees de paie
-uploads/
-*.xlsx
-*.xls
-*.pdf
-
-# Installateurs (binaires volumineux)
-pour installation/
