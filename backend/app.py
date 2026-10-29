@@ -151,18 +151,14 @@ def calculate_payroll():
 
     except Exception as e:
         import traceback
-        error_trace = traceback.format_exc()
         print(f"❌ ERREUR lors du calcul: {str(e)}", file=sys.stderr)
-        print(error_trace, file=sys.stderr)
-        
-        # Retourner un message d'erreur détaillé
-        error_msg = str(e)
-        if "pdfplumber" in error_msg.lower() or "pdf" in error_msg.lower():
-            error_msg = f"Erreur PDF: {error_msg}. Vérifiez que pdfplumber est installé."
-        elif "openpyxl" in error_msg.lower() or "excel" in error_msg.lower():
-            error_msg = f"Erreur Excel: {error_msg}. Vérifiez que openpyxl est installé."
-        
-        return jsonify({"error": error_msg, "details": str(e)}), 500
+        print(traceback.format_exc(), file=sys.stderr)
+
+        # Ne jamais renvoyer le detail technique au client (fuite d'informations)
+        return jsonify({
+            "error": "Erreur lors du calcul du fichier. "
+                     "Verifiez son format et son contenu, puis reessayez."
+        }), 500
 
 @app.route('/api/export-csv', methods=['POST'])
 def export_csv():
@@ -185,7 +181,8 @@ def export_csv():
         )
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"❌ ERREUR export CSV: {str(e)}", file=sys.stderr)
+        return jsonify({"error": "Erreur lors de l'export CSV."}), 500
 
 
 @app.route('/api/export-pdf', methods=['POST'])
@@ -301,7 +298,9 @@ def export_pdf():
         )
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"❌ ERREUR export PDF: {str(e)}", file=sys.stderr)
+        return jsonify({"error": "Erreur lors de l'export PDF."}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    # debug=False : ne jamais exposer la console de debug Werkzeug
+    app.run(host='127.0.0.1', debug=False, port=5000)
