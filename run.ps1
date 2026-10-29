@@ -32,28 +32,51 @@ Write-Host "  $nodeVersion" -ForegroundColor Green
 Write-Host ""
 Write-Host "OK: Configuration du backend Python..." -ForegroundColor Yellow
 $backendVenv = "backend\venv"
+$venvPython = "$backendVenv\Scripts\python.exe"
 
-if (-not (Test-Path $backendVenv)) {
+# Vérifier que le venv existant est utilisable (Python de base peut avoir été supprimé/modifié)
+$venvValid = $false
+if (Test-Path $venvPython) {
+    & $venvPython --version 2>&1 | Out-Null
+    if ($LASTEXITCODE -eq 0) { $venvValid = $true }
+}
+
+if (-not $venvValid) {
+    if (Test-Path $backendVenv) {
+        Write-Host "  Venv invalide detecte, reparation..." -ForegroundColor Yellow
+        Remove-Item -LiteralPath $backendVenv -Recurse -Force -ErrorAction SilentlyContinue
+    }
     Write-Host "  Creation du venv..." -ForegroundColor Gray
-    cd backend
-    python -m venv venv
-    if ($LASTEXITCODE -ne 0) {
+    # Preferer Python 3.11 (compatible avec les dependances), sinon python du PATH
+    $basePython = "python"
+    $baseArgs = @()
+    if (Get-Command py -ErrorAction SilentlyContinue) {
+        & py -3.11 --version 2>&1 | Out-Null
+        if ($LASTEXITCODE -eq 0) { $basePython = "py"; $baseArgs = @("-3.11") }
+    }
+    & $basePython @baseArgs -m venv $backendVenv
+    if ($LASTEXITCODE -ne 0 -or -not (Test-Path $venvPython)) {
         Write-Host "Erreur lors de la creation du venv!" -ForegroundColor Red
-        cd ..
         Read-Host "Appuyez sur Entree pour fermer"
         exit 1
     }
-    cd ..
 }
 
 # Mettre à jour les dépendances (toujours)
 Write-Host "  Installation des dependances Python..." -ForegroundColor Gray
-& ".\backend\venv\Scripts\pip.exe" install -q -r "backend\requirements.txt" --disable-pip-version-check 2>$null
+& "$venvPython" -m pip install -q -r "backend\requirements.txt" --disable-pip-version-check 2>$null
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Avertissement: Certaines dependances n'ont pas pu etre installees" -ForegroundColor Yellow
     Write-Host "  Tentative de reparation..." -ForegroundColor Gray
-    & ".\backend\venv\Scripts\pip.exe" install --upgrade pip -q --disable-pip-version-check 2>$null
-    & ".\backend\venv\Scripts\pip.exe" install -r "backend\requirements.txt" -q --disable-pip-version-check 2>$null
+    & "$venvPython" -m pip install --upgrade pip -q --disable-pip-version-check 2>$null
+    & "$venvPython" -m pip install -r "backend\requirements.txt" -q --disable-pip-version-check 2>$null
+}
+& $venvPython -c "import flask, pandas, pdfplumber" 2>$null
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "ERREUR: Dependances Python manquantes (flask/pandas/pdfplumber)!" -ForegroundColor Red
+    Write-Host "  Executez INSTALL.ps1 pour reparer l'installation." -ForegroundColor Red
+    Read-Host "Appuyez sur Entree pour fermer"
+    exit 1
 }
 Write-Host "  Backend: OK" -ForegroundColor Green
 

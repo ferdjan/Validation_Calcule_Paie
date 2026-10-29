@@ -1,4 +1,32 @@
-# Donnees de l'application (jamais versionnees)
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+*.egg-info/
+build/
+dist/
+
+# ===== Node / Vite =====
+node_modules/
+dist-ssr/
+.vite/
+frontend/dist/
+*.local
+
+# ===== IDE / OS =====
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ===== Donnees de l'application "Gestion Articles" (jamais versionnees) =====
 web_app.db
 web_app.db-*
 web_app-backup-*.db
@@ -6,20 +34,11 @@ web_app-backup-*.db
 uploads/
 documents_pdf/
 
-# Paquets embarques pour l'installation hors-ligne (regeneres par pip download)
+# ===== Paquets / installateurs embarques (regeneres) =====
 wheels/
-
-# Installateurs hors-ligne (Node/Python, telechargeables sur les sites officiels)
 pour installation/
 
-# Node / Vite
-node_modules/
-frontend/dist/
-frontend/node_modules/.vite/
-.vite/
-
-# Python
-__pycache__/
-*.py[cod]
-.venv/
-venv/
+# ===== Donnees de paie (ne jamais versionner) =====
+*.xlsx
+*.xls
+*.pdf
