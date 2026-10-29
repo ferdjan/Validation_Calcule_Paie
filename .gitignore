@@ -1,4 +1,4 @@
-# ===== Python =====
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -6,39 +6,31 @@ __pycache__/
 .Python
 venv/
 env/
-.venv/
 *.egg-info/
-build/
 dist/
+build/
 
-# ===== Node / Vite =====
+# Node
 node_modules/
+dist/
 dist-ssr/
-.vite/
-frontend/dist/
 *.local
 
-# ===== IDE / OS =====
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+
+# OS
 .DS_Store
 Thumbs.db
 
-# ===== Donnees de l'application "Gestion Articles" (jamais versionnees) =====
-web_app.db
-web_app.db-*
-web_app-backup-*.db
-.session.key
+# Uploads / donnees de paie
 uploads/
-documents_pdf/
-
-# ===== Paquets / installateurs embarques (regeneres) =====
-wheels/
-pour installation/
-
-# ===== Donnees de paie (ne jamais versionner) =====
 *.xlsx
 *.xls
 *.pdf
+
+# Installateurs (binaires volumineux)
+pour installation/

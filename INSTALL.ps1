@@ -60,7 +60,14 @@ if (Test-Path "backend\venv") {
 
 Write-Host "  • Création du venv..." -ForegroundColor Gray
 cd backend
-python -m venv venv
+# Préférer Python 3.11 (compatible avec les dépendances), sinon python du PATH
+$basePython = "python"
+$baseArgs = @()
+if (Get-Command py -ErrorAction SilentlyContinue) {
+    & py -3.11 --version 2>&1 | Out-Null
+    if ($LASTEXITCODE -eq 0) { $basePython = "py"; $baseArgs = @("-3.11") }
+}
+& $basePython @baseArgs -m venv venv
 if ($LASTEXITCODE -ne 0) {
     Write-Host "  ✗ Erreur lors de la création du venv" -ForegroundColor Red
     cd ..
